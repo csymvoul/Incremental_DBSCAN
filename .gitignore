@@ -3,3 +3,6 @@ rabbitmq/rabbitmq_ip
 
 # Ignore the venv folder
 venv/
+
+# Ignore the .idea folder
+.idea/
