@@ -1,0 +1,59 @@
++++++++++++++++++++++++ Incremental DBSCAN Overall Architecture ++++++++++++++++++++++++++++++++
++                                                                                              +
++    After the initial train of the DBSCAN is complete, the Incremental DBSCAN takes place.    +
++    The pseudo-code for the Incremental DBSCAN algorithm is presented below.                  +
++    Its job is to predict where the incoming data are clustered, and update the algorithm.    +
++                                                                                              +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
++++++++++++++++++++++++++++++ Incremental DBSCAN Algorithm +++++++++++++++++++++++++++++++++++++
++                                                                                              +
++                     Pseudo-code of the Incremental DBSCAN Algorithm                          +
++                                                                                              +
++                                                                                              +
++                                                                                              +
++    1. Parameters used                                                                        +
++        1.1. D <-- A dataset containing n objects {X1, X2, ... , Xn}                          +
++                                                                                              +
++        1.2. eps <-- radius of the cluster                                                    +
++                                                                                              +
++        1.3. minPts <-- minimum number of data objects (minimum minPts should be              +
++                        (Dimensions of the dataset + 1))                                      +
++                                                                                              +
++        1.4. Ci (where i=1, 2, 3, ..., m) <-- new data item                                   +
++                                                                                              +
++                                                                                              +
++    2. K <-- Already existing clusters                                                        +
++                                                                                              +
++                                                                                              +
++    3. New data (streams) arrive to the engine. They will be clustered directly, based on     +
++       the minimum mean (M) between the data and the core objects of the already existing     +
++       clusters.                                                                              +
++                                                                                              +
++                                                                                              +
++    4. FOR (i = 1:m):                                                                         +
++        4.1. Find mean dis(Ci, M)distance between the item and the core elements of each      +
++             cluster.                                                                         +
++                                                                                              +
++             NOTE: A point is a CORE POINT if at least minPts are within distance eps of      +
++             it. In other words, a point is a CORE POINT if it is part of a cluster and       +
++             not an outlier.                                                                  +
++                                                                                              +
++        4.2. IF ((dis(Ci, M) is minimum) AND (Ci <= eps) AND (size(Kp) >= minPts)):           +
++              4.2.1. Unite cluster Kp with the item Ci (Kp U Ci)                              +
++                                                                                              +
++        4.3. ELSE IF ((dis(Ci, M) != minimum) OR (Ci > eps) OR (size(Kp)<minPts)):            +
++              4.3.1. Set item as outlier (Oi)                                                 +
++                                                                                              +
++        4.4. ELSE IF (Count(Oi)>minPts):                                                      +
++              4.4.1. Form new cluster with the Oi                                             +
++                                                                                              +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
++++++++++++++++++++++++++++++++++++++ Taken from +++++++++++++++++++++++++++++++++++++++++++++++
++                                                                                              +
++                   Chakraborty, S., & Nagwani, N. K. (2014). Analysis and                     +
++                   study of Incremental DBSCAN clustering algorithm. arXiv                    +
++                   preprint arXiv:1406.4754.                                                  +
++                                                                                              +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
