@@ -2,7 +2,8 @@ from time import sleep
 
 import pika
 
-connection = pika.BlockingConnection(pika.ConnectionParameters('83.212.238.159'))
+rabbitmq_ip = open('../rabbitmq/rabbitmq_ip', 'r')
+connection = pika.BlockingConnection(pika.ConnectionParameters(rabbitmq_ip.read()))
 channel = connection.channel()
 
 channel.queue_declare(queue='hello')
@@ -18,6 +19,5 @@ with open('../data/test_file.csv') as fp:
 
         # Publish a row to RabbitMQ every 3 seconds
         sleep(3)
-
 
 connection.close()

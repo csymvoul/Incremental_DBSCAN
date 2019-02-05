@@ -1,6 +1,8 @@
 import pika
 
-connection = pika.BlockingConnection(pika.ConnectionParameters('83.212.238.159'))
+rabbitmq_ip = open('rabbitmq_ip', 'r')
+
+connection = pika.BlockingConnection(pika.ConnectionParameters(rabbitmq_ip))
 channel = connection.channel()
 
 channel.queue_declare(queue='hello')

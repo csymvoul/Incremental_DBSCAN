@@ -1,0 +1,5 @@
+# Ignore file related to the public IP of the RabbitMQ
+rabbitmq/rabbitmq_ip
+
+# Ignore the venv folder
+venv/
