@@ -1,5 +1,5 @@
 import pika
-# from incremental_dbscan import initiate_dbscan
+from incremental_dbscan import initiate_dbscan
 
 rabbitmq_ip = open('rabbitmq_ip', 'r')
 
