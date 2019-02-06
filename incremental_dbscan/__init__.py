@@ -1,6 +1,7 @@
 import pandas as pd
 import io
 # from sklearn.cluster import DBSCAN
+from sklearn.cluster import DBSCAN
 
 
 class Incremental_DBSCAN:
@@ -19,5 +20,8 @@ class Incremental_DBSCAN:
     def get_headers(self):
         return list(self.dataset)
 
+    def batch_dbscan(self):
+        batch_dbscan = DBSCAN(eps=3, min_samples=2).fit(self.dataset)
+        print(batch_dbscan.labels_)
     # def initiate_dbscan(first_datum):
         # def incremental_dbscan(datum):

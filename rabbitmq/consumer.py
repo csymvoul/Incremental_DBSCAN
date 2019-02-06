@@ -4,6 +4,7 @@ from incremental_dbscan import Incremental_DBSCAN
 
 dbscan = Incremental_DBSCAN()
 
+
 def callback(ch, method, properties, body):
     # print("[x] Received %r" % body.decode())
     send_to_incremental_dbscan(body.decode())
@@ -16,6 +17,7 @@ def send_to_incremental_dbscan(message):
         # print("The message received from the callback() is: " + message)
 
         dbscan.set_data(message)
+        dbscan.batch_dbscan()
         # print(dbscan.get_headers())
 
 
