@@ -1,13 +1,23 @@
 import pandas as pd
-from sklearn.cluster import DBSCAN
+import io
+# from sklearn.cluster import DBSCAN
 
 
-def initiate_dbscan(first_datum):
-    print(first_datum)
-    # dataset = pd.read_csv(first_datum, sep=',')
-    # print(dataset)
-    # dbscan = DBSCAN(eps=15, min_samples=3).fit(dataset)
-    # labels = dbscan.labels_
-    # print(labels)
+class Incremental_DBSCAN:
 
-# def incremental_dbscan(datum):
+    def __init__(self):
+        self.dataset = pd.DataFrame(columns=['CPU', 'Memory', 'Disk'])
+
+    def set_data(self, message):
+        # store the collected message to a temp dataframe
+        temp = pd.read_csv(io.StringIO(message), sep=',', header=None)
+        temp.columns = ['CPU', 'Memory', 'Disk']
+
+        # append the temp to the dataset
+        self.dataset = self.dataset.append(temp)
+
+    def get_headers(self):
+        return list(self.dataset)
+
+    # def initiate_dbscan(first_datum):
+        # def incremental_dbscan(datum):

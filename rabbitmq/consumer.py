@@ -1,25 +1,32 @@
 import pika
-from incremental_dbscan import initiate_dbscan
-
-rabbitmq_ip = open('rabbitmq_ip', 'r')
+from incremental_dbscan import Incremental_DBSCAN
 
 
-connection = pika.BlockingConnection(pika.ConnectionParameters(
-    rabbitmq_ip.read()))
-channel = connection.channel()
-
-# Declare the channel on the specific queue
-channel.queue_declare(queue='hello')
-
+dbscan = Incremental_DBSCAN()
 
 def callback(ch, method, properties, body):
-    print("[x] Received %r" % body)
-    # initiate_dbscan(body)
+    # print("[x] Received %r" % body.decode())
+    send_to_incremental_dbscan(body.decode())
 
 
+def send_to_incremental_dbscan(message):
+    # first_row = True
+    if True:
+        # Incremental_DBSCAN.get_headers(body.decode())
+        # print("The message received from the callback() is: " + message)
+
+        dbscan.set_data(message)
+        # print(dbscan.get_headers())
+
+
+rabbitmq_ip = open('rabbitmq_ip', 'r')
+connection = pika.BlockingConnection(pika.ConnectionParameters(rabbitmq_ip.read()))
+channel = connection.channel()
+# Declare the channel on the specific queue
+channel.queue_declare(queue='hello')
+first_row = True
 channel.basic_consume(callback,
                       queue='hello',
                       no_ack=True)
-
-print("[x] Waiting for messages. To exit press CTRL+C")
+# print("[x] Waiting for messages. To exit press CTRL+C")
 channel.start_consuming()

@@ -12,7 +12,7 @@ with open('../data/test_file.csv') as fp:
         message = line
         channel.basic_publish(exchange='',
                               routing_key='hello',
-                              body=json.message)
+                              body=message)
 
         print('[*] Now published: ' + message)
 
