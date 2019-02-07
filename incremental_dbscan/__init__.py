@@ -22,6 +22,18 @@ class Incremental_DBSCAN:
 
     def batch_dbscan(self):
         batch_dbscan = DBSCAN(eps=3, min_samples=2).fit(self.dataset)
-        print(batch_dbscan.labels_)
+
+        # Store the labels in a ndarray
+        labels = batch_dbscan.labels_
+
+        # Get the number of the clusters created
+        n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
+        print('Number of clusters: ', n_clusters_)
+
+        # Store the label of each element on the dataset
+        # TODO  Still not fully working -- Needs to be  checked
+        self.dataset[['Labels'][-1]] = labels[-1]
+        print(self.dataset['Labels'])
+
     # def initiate_dbscan(first_datum):
         # def incremental_dbscan(datum):
