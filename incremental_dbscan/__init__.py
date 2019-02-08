@@ -25,6 +25,7 @@ class Incremental_DBSCAN:
 
         # Store the labels in a ndarray
         labels = batch_dbscan.labels_
+        print(labels)
 
         # Get the number of the clusters created
         n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
