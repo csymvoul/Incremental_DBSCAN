@@ -1,5 +1,6 @@
 import pandas as pd
 import io
+import numpy as np
 # from sklearn.cluster import DBSCAN
 from sklearn.cluster import DBSCAN
 
@@ -25,16 +26,26 @@ class Incremental_DBSCAN:
 
         # Store the labels in a ndarray
         labels = batch_dbscan.labels_
-        print(labels)
 
         # Get the number of the clusters created
         n_clusters_ = len(set(labels)) - (1 if -1 in labels else 0)
         print('Number of clusters: ', n_clusters_)
 
-        # Store the label of each element on the dataset
         # TODO  Still not fully working -- Needs to be  checked
-        self.dataset[['Labels'][-1]] = labels[-1]
-        print(self.dataset['Labels'])
+        self.add_labels_to_dataset(labels=labels)
 
-    # def initiate_dbscan(first_datum):
-        # def incremental_dbscan(datum):
+        # Store the label of each element on the dataset
+        # print(type(labels))
+
+    def add_labels_to_dataset(self, labels):
+        labels_df = pd.DataFrame(labels, columns=['Labels'])
+
+        self.dataset.index = labels_df.index
+        self.dataset['Labels'] = labels_df['Labels']
+        # print(len(labels_df), type(labels_df))
+        # print(len(self.dataset), type(self.dataset))
+
+    def find_mean_element(self):
+        # TODO find them mean element of each dataset in order to
+        # TODO compare the distances on each dataset
+        return self.dataset

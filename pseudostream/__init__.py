@@ -6,17 +6,19 @@ connection = pika.BlockingConnection(pika.ConnectionParameters(rabbitmq_ip.read(
 channel = connection.channel()
 
 channel.queue_declare(queue='hello')
+try:
+    with open('../data/test_file.csv') as fp:
+        for line in fp:
+            message = line
+            channel.basic_publish(exchange='',
+                                  routing_key='hello',
+                                  body=message)
 
-with open('../data/test_file.csv') as fp:
-    for line in fp:
-        message = line
-        channel.basic_publish(exchange='',
-                              routing_key='hello',
-                              body=message)
+            print('[*] Now published: ' + message)
 
-        print('[*] Now published: ' + message)
+            # Publish a row to RabbitMQ every 3 seconds
+            sleep(3)
 
-        # Publish a row to RabbitMQ every 3 seconds
-        sleep(3)
-
-connection.close()
+    connection.close()
+except TimeoutError:
+    print('Timeout exception: Connection with RabbitMQ failed. ', TimeoutError)
