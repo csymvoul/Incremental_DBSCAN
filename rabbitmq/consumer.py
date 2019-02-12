@@ -1,7 +1,6 @@
 import pika
 from incremental_dbscan import Incremental_DBSCAN
 
-
 dbscan = Incremental_DBSCAN()
 
 
@@ -11,14 +10,8 @@ def callback(ch, method, properties, body):
 
 
 def send_to_incremental_dbscan(message):
-    # first_row = True
-    if True:
-        # Incremental_DBSCAN.get_headers(body.decode())
-        # print("The message received from the callback() is: " + message)
-
-        dbscan.set_data(message)
-        dbscan.batch_dbscan()
-        # print(dbscan.get_headers())
+    dbscan.set_data(message)
+    dbscan.batch_dbscan()
 
 
 rabbitmq_ip = open('rabbitmq_ip', 'r')
