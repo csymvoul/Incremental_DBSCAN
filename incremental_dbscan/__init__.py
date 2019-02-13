@@ -10,6 +10,7 @@ class Incremental_DBSCAN:
     def __init__(self):
         self.dataset = pd.DataFrame(columns=['CPU', 'Memory', 'Disk'])
         self.labels = pd.DataFrame(columns=['Label'])
+        self.final_dataset = pd.DataFrame(columns=['CPU', 'Memory', 'Disk', 'Label'])
 
     def set_data(self, message):
         # store the collected message to a temp dataframe
@@ -29,8 +30,12 @@ class Incremental_DBSCAN:
         self.add_labels_to_dataset(batch_dbscan.labels_)
 
     def add_labels_to_dataset(self, labels):
-        self.labels['Label'] = labels
-        print(self.labels)
+        self.labels = pd.DataFrame(labels, columns=['Labels'])
+        # final_ds =
+        # final_ds =
+        self.final_dataset = pd.concat([self.dataset, self.labels], axis=1)
+        print('printing final_dataset')
+        print(self.final_dataset)
 
     def find_mean_element(self):
         # TODO find them mean element of each dataset in order to
