@@ -20,9 +20,6 @@ class Incremental_DBSCAN:
         # append the temp to the dataset
         self.dataset = self.dataset.append(temp, ignore_index=True)
 
-    def get_headers(self):
-        return list(self.dataset)
-
     def batch_dbscan(self):
         batch_dbscan = DBSCAN(eps=3, min_samples=2).fit(self.dataset)
         # Get the number of the clusters created
@@ -37,11 +34,14 @@ class Incremental_DBSCAN:
         self.final_dataset = pd.concat([self.dataset, self.labels], axis=1)
 
     def sort_dataset_based_on_labels(self):
-        self.final_dataset = self.final_dataset.sort_values(by=['Label'])
-        self.final_dataset = self.final_dataset.astype(int)
         print(self.final_dataset)
+        self.final_dataset = self.final_dataset.sort_values(by=['Label'])
+        # Cast everything in the final_dataset as integer. If this line is missing, it throws an error
+        self.final_dataset = self.final_dataset.astype(int)
 
     def find_mean_core_element(self):
         self.mean_core_elements = self.final_dataset.groupby('Label')['CPU', 'Memory', 'Disk'].mean()
         print(self.mean_core_elements)
+
+
 
