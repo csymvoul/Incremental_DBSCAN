@@ -1,7 +1,5 @@
 import pandas as pd
 import io
-import numpy as np
-# from sklearn.cluster import DBSCAN
 from sklearn.cluster import DBSCAN
 
 
@@ -40,8 +38,8 @@ class Incremental_DBSCAN:
         self.final_dataset = self.final_dataset.astype(int)
 
     def find_mean_core_element(self):
-        self.mean_core_elements = self.final_dataset.groupby('Label')['CPU', 'Memory', 'Disk'].mean()
+        # Exclude rows labeled as outliers
+        self.mean_core_elements = self.final_dataset.loc[self.final_dataset['Label'] != -1]
+        # Find the mean core elements of each cluster
+        self.mean_core_elements = self.mean_core_elements.groupby('Label')['CPU', 'Memory', 'Disk'].mean()
         print(self.mean_core_elements)
-
-
-
