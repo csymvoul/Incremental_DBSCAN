@@ -5,7 +5,7 @@ from math import sqrt
 
 
 def distance(element, mean_core_elements):
-    print(element['CPU'])
+    return 0;
 
 
 class Incremental_DBSCAN:
@@ -41,22 +41,37 @@ class Incremental_DBSCAN:
     def sort_dataset_based_on_labels(self):
         print(self.final_dataset)
         self.final_dataset = self.final_dataset.sort_values(by=['Label'])
-        # Cast everything in the final_dataset as integer. If this line is missing, it throws an error
+        # Cast everything in the final_dataset as integer.
+        # If this line is missing, it throws an error
         self.final_dataset = self.final_dataset.astype(int)
 
     def find_mean_core_element(self):
         # Exclude rows labeled as outliers
         self.mean_core_elements = self.final_dataset.loc[self.final_dataset['Label'] != -1]
         # Find the mean core elements of each cluster
-        self.mean_core_elements = self.mean_core_elements.groupby('Label')['CPU', 'Memory', 'Disk'].mean()
+        self.mean_core_elements = self.mean_core_elements \
+            .groupby('Label')['CPU', 'Memory', 'Disk'].mean()
         print(self.mean_core_elements)
         response = self.calculate_distance()
         print(response)
 
     def calculate_distance(self):
         print(self.final_dataset.tail(n=1))
+        min_dist = None
+        min_dist_index = None
+        # Check if there are elements in the core_elements dataframe.
+        # In other words if there are clusters created by the DBSCAN algorithm
         if not self.mean_core_elements.empty:
-            distance(element=self.final_dataset.tail(n=1), mean_core_elements=self.mean_core_elements)
-            return self.mean_core_elements
+            # Iterate over the mean_core_elements dataframe and find the minimum distance
+            for index, row in self.mean_core_elements.iterrows():
+                tmp_dist = distance(element=self.final_dataset.tail(n=1),
+                                                    mean_core_elements=row)
+                if min_dist is None:
+                    min_dist = tmp_dist
+                    min_dist_index = index
+                elif tmp_dist < min_dist:
+                    min_dist = tmp_dist
+                    min_dist_index = index
+            return min_dist_index
         else:
             return 'Empty dataframe, no clusters found'
