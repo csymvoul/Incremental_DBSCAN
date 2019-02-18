@@ -5,7 +5,7 @@ from math import sqrt
 
 
 def distance(element, mean_core_elements):
-    return 0;
+    return 0
 
 
 class Incremental_DBSCAN:
@@ -29,7 +29,6 @@ class Incremental_DBSCAN:
         batch_dbscan = DBSCAN(eps=self.eps, min_samples=self.min_samples).fit(self.dataset)
         # Get the number of the clusters created
         n_clusters_ = len(set(self.labels)) - (1 if -1 in self.labels else 0)
-        # TODO  Still not fully working -- Needs to be  checked
         self.add_labels_to_dataset(batch_dbscan.labels_)
         self.sort_dataset_based_on_labels()
         self.find_mean_core_element()
