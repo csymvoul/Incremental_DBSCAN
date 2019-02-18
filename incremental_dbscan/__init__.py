@@ -1,15 +1,22 @@
 import pandas as pd
 import io
 from sklearn.cluster import DBSCAN
+from math import sqrt
+
+
+def distance(element, mean_core_elements):
+    print(element['CPU'])
 
 
 class Incremental_DBSCAN:
 
-    def __init__(self):
+    def __init__(self, eps=5, min_samples=3):
         self.dataset = pd.DataFrame(columns=['CPU', 'Memory', 'Disk'])
         self.labels = pd.DataFrame(columns=['Label'])
         self.final_dataset = pd.DataFrame(columns=['CPU', 'Memory', 'Disk', 'Label'])
         self.mean_core_elements = pd.DataFrame(columns=['CPU', 'Memory', 'Disk', 'Label'])
+        self.eps = eps
+        self.min_samples = min_samples
 
     def set_data(self, message):
         # store the collected message to a temp dataframe
@@ -19,7 +26,7 @@ class Incremental_DBSCAN:
         self.dataset = self.dataset.append(temp, ignore_index=True)
 
     def batch_dbscan(self):
-        batch_dbscan = DBSCAN(eps=3, min_samples=2).fit(self.dataset)
+        batch_dbscan = DBSCAN(eps=self.eps, min_samples=self.min_samples).fit(self.dataset)
         # Get the number of the clusters created
         n_clusters_ = len(set(self.labels)) - (1 if -1 in self.labels else 0)
         # TODO  Still not fully working -- Needs to be  checked
@@ -43,3 +50,13 @@ class Incremental_DBSCAN:
         # Find the mean core elements of each cluster
         self.mean_core_elements = self.mean_core_elements.groupby('Label')['CPU', 'Memory', 'Disk'].mean()
         print(self.mean_core_elements)
+        response = self.calculate_distance()
+        print(response)
+
+    def calculate_distance(self):
+        print(self.final_dataset.tail(n=1))
+        if not self.mean_core_elements.empty:
+            distance(element=self.final_dataset.tail(n=1), mean_core_elements=self.mean_core_elements)
+            return self.mean_core_elements
+        else:
+            return 'Empty dataframe, no clusters found'
