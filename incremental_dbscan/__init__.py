@@ -82,3 +82,11 @@ class Incremental_DBSCAN:
             return min_dist_index
         else:
             return 'Empty dataframe, no clusters found'
+
+    # TODO: Find if there are at least min_samples  belonging in the cluster with the minimum distance
+    #  in a radius of eps from the current element . If the above statement is true, then consider this
+    #  element as part of the cluster and recompute the mean_core_element.  If not, check whether there
+    #  are at least min_samples outliers in the eps radius of the element, in order to create their own cluster.
+    #  If yes, then create another cluster, change their Label and find their mean_core_element
+    #  If no, consider the element as outlier
+    #  -- The deletion of an element should be a similar process.
