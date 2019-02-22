@@ -16,7 +16,7 @@ def distance(element, mean_core_element):
     return distance.iloc[0].astype(float)
 
 
-class Incremental_DBSCAN:
+class IncrementalDBSCAN:
 
     def __init__(self, eps=5, min_samples=3):
         """
