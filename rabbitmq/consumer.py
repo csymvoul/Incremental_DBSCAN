@@ -1,7 +1,7 @@
 import pika
-from incremental_dbscan import Incremental_DBSCAN
+from incremental_dbscan import IncrementalDBSCAN
 
-dbscan = Incremental_DBSCAN()
+dbscan = IncrementalDBSCAN()
 
 
 def callback(ch, method, properties, body):

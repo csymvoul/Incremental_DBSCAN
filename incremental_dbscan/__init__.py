@@ -10,13 +10,13 @@ def distance(element, mean_core_element):
     :param mean_core_element:  the average of the elements in a cluster
     :returns distance: the Euclidean distance between the mean_core_element and the element (float)
     """
-    distance = ((element['CPU'] - mean_core_element['CPU'])**2 +
-                    (element['Memory'] - mean_core_element['Memory'])**2 +
-                    (element['Disk'] - mean_core_element['Disk'])**2)**(1/2)
-    return distance.iloc[0].astype(float)
+    euclidean_distance = ((element['CPU'] - mean_core_element['CPU']) ** 2 +
+                    (element['Memory'] - mean_core_element['Memory']) ** 2 +
+                    (element['Disk'] - mean_core_element['Disk']) ** 2) ** (1/2)
+    return euclidean_distance.iloc[0].astype(float)
 
 
-class Incremental_DBSCAN:
+class IncrementalDBSCAN:
 
     def __init__(self, eps=5, min_samples=3):
         """
