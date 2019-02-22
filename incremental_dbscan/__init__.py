@@ -43,6 +43,11 @@ class Incremental_DBSCAN:
         self.find_mean_core_element()
 
     def add_labels_to_dataset(self, labels):
+        """
+                This function adds the labels on the dataset after the batch DBSCAN is done
+                :param labels: The labels param should be a list that  describes the cluster of each element.
+                                         If an element is considered as an outlier it should be equal to -1
+        """
         self.labels = pd.DataFrame(labels, columns=['Label'])
         self.final_dataset = pd.concat([self.dataset, self.labels], axis=1)
 
@@ -54,6 +59,10 @@ class Incremental_DBSCAN:
         self.final_dataset = self.final_dataset.astype(int)
 
     def find_mean_core_element(self):
+        """
+                This function calculates the average core elements of each cluster.
+                Note: It does not calculate an average core element for the outliers!
+        """
         # Exclude rows labeled as outliers
         self.mean_core_elements = self.final_dataset.loc[self.final_dataset['Label'] != -1]
         # Find the mean core elements of each cluster
@@ -61,8 +70,16 @@ class Incremental_DBSCAN:
             .groupby('Label')['CPU', 'Memory', 'Disk'].mean()
         # print(self.mean_core_elements)
         response = self.calculate_distance()
+        # print(response)
+        if response is not None:
+            self.check_min_samples_in_eps(min_dist_index=response)
 
     def calculate_distance(self):
+        """
+                This function identifies the closest mean_core_element to the incoming element t
+                hat has not yet been added to a cluster or considered as outlier.
+                The distance is calculated using the distance function as it is described above.
+        """
         min_dist = None
         min_dist_index = None
         # Check if there are elements in the core_elements dataframe.
@@ -81,7 +98,25 @@ class Incremental_DBSCAN:
             print('Minimum distance is: ', min_dist, ' at cluster ', min_dist_index)
             return min_dist_index
         else:
-            return 'Empty dataframe, no clusters found'
+            return None
+
+    def check_min_samples_in_eps(self, min_dist_index):
+        """
+                This function checks whether there are at least min_samples
+                in the given radius from the new entry element.
+        """
+        # This happens
+        print(self.final_dataset.loc[self.final_dataset['Label'] == min_dist_index])
+
+    def find_largest_cluster(self):
+        """
+                This function identifies the largest of the clusters with respect to the number of the core elements.
+                The largest cluster is the one with the most core elements in it.
+        """
+        return self.mean_core_elements
+
+    def incremental_dbscan_(self):
+        return self.final_dataset
 
     # TODO: Find if there are at least min_samples  belonging in the cluster with the minimum distance
     #  in a radius of eps from the current element . If the above statement is true, then consider this
