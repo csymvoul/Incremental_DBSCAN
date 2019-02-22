@@ -147,7 +147,7 @@ class Incremental_DBSCAN:
         """
         This function identifies the largest of the clusters with respect to the number of the core elements.
         The largest cluster is the one with the most core elements in it.
-        :returns :the number of the largest cluster
+        :returns: the number of the largest cluster
         """
         cluster_number = self.final_dataset.groupby(['Label']).count()
         print(cluster_number)
