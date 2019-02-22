@@ -1,5 +1,5 @@
 import pika
-from incremental_dbscan import Incremental_DBSCAN
+from incremental_dbscan import IncrementalDBSCAN
 
 dbscan = IncrementalDBSCAN()
 
