@@ -58,9 +58,15 @@ class Incremental_DBSCAN:
         # Cast everything in the final_dataset as integer.
         # If this line is missing, it throws an error
         self.final_dataset = self.final_dataset.astype(int)
+
+        self.incremental_dbscan_()
         # self.sort_dataset_based_on_labels()
-        self.find_mean_core_element()
-        self.largest_cluster = self.find_largest_cluster()
+        # self.find_mean_core_element()
+        # response = self.calculate_distance()
+        # # print(response)
+        # if response is not None:
+        #     self.check_min_samples_in_eps(min_dist_index=response)
+        # self.largest_cluster = self.find_largest_cluster()
 
     def add_labels_to_dataset(self, labels):
         """
@@ -92,10 +98,10 @@ class Incremental_DBSCAN:
         self.mean_core_elements = self.mean_core_elements \
             .groupby('Label')['CPU', 'Memory', 'Disk'].mean()
         # print(self.mean_core_elements)
-        response = self.calculate_distance()
-        # print(response)
-        if response is not None:
-            self.check_min_samples_in_eps(min_dist_index=response)
+        # response = self.calculate_distance()
+        # # print(response)
+        # if response is not None:
+        #     self.check_min_samples_in_eps(min_dist_index=response)
 
     def calculate_distance(self):
         """
@@ -140,6 +146,7 @@ class Incremental_DBSCAN:
         :param min_dist_index: This is the parameter that contains information related to the closest
         mean_core_element to the current element.
         """
+        print(self.mean_core_elements)
 
     def find_largest_cluster(self):
         """
@@ -162,7 +169,12 @@ class Incremental_DBSCAN:
             return largest_cluster
 
     def incremental_dbscan_(self):
-        return self.final_dataset
+        self.find_mean_core_element()
+        response = self.calculate_distance()
+        # print(response)
+        if response is not None:
+            self.check_min_samples_in_eps(min_dist_index=response)
+        self.largest_cluster = self.find_largest_cluster()
 
     # TODO: Find if there are at least min_samples  belonging in the cluster with the minimum distance
     #  in a radius of eps from the current element . If the above statement is true, then consider this
