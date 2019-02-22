@@ -1,11 +1,8 @@
 import pandas as pd
 import io
 from sklearn.cluster import DBSCAN
-from math import sqrt
-from math import pow
 
 
-# Returns the Euclidean of a mean core element and the current element
 def distance(element, mean_core_element):
     """
     Calculates the distance between the element and the mean_core_element using the Euclidean distance
@@ -33,6 +30,7 @@ class Incremental_DBSCAN:
         self.mean_core_elements = pd.DataFrame(columns=['CPU', 'Memory', 'Disk', 'Label'])
         self.eps = eps
         self.min_samples = min_samples
+        self.largest_cluster = -1
 
     def set_data(self, message):
         """
@@ -62,13 +60,13 @@ class Incremental_DBSCAN:
         self.final_dataset = self.final_dataset.astype(int)
         # self.sort_dataset_based_on_labels()
         self.find_mean_core_element()
-        self.find_largest_cluster()
+        self.largest_cluster = self.find_largest_cluster()
 
     def add_labels_to_dataset(self, labels):
         """
         This function adds the labels on the dataset after the batch DBSCAN is done
         :param labels: The labels param should be a list that  describes the cluster of each element.
-                                 If an element is considered as an outlier it should be equal to -1
+        If an element is considered as an outlier it should be equal to -1
         """
         self.labels = pd.DataFrame(labels, columns=['Label'])
         self.final_dataset = pd.concat([self.dataset, self.labels], axis=1)
@@ -106,7 +104,7 @@ class Incremental_DBSCAN:
         The distance is calculated using the distance function as it is described above.
 
         :returns min_dist_index: if there is a cluster that is closest to the new entry element
-                        or None if there are no clusters yet.
+        or None if there are no clusters yet.
         """
         min_dist = None
         min_dist_index = None
@@ -140,17 +138,28 @@ class Incremental_DBSCAN:
         2.  Consider it as a new outlier
 
         :param min_dist_index: This is the parameter that contains information related to the closest
-                                                 mean_core_element to the current element.
+        mean_core_element to the current element.
         """
 
     def find_largest_cluster(self):
         """
         This function identifies the largest of the clusters with respect to the number of the core elements.
         The largest cluster is the one with the most core elements in it.
-        :returns: the number of the largest cluster
+
+        :returns: the number of the largest cluster. If -1 is returned, then there are no clusters created
+        in the first place
         """
-        cluster_number = self.final_dataset.groupby(['Label']).count()
-        print(cluster_number)
+        cluster_size = self.final_dataset.groupby('Label')['Label'].count()
+        # cluster_size = cluster_size['CPU'].value_counts()
+        cluster_size = cluster_size.drop(labels=[-1])
+        largest_cluster = -1
+        if not cluster_size.empty:
+            largest_cluster = cluster_size.idxmax()
+            print('The cluster with the most elements in it is cluster no: ', cluster_size.idxmax())
+            return largest_cluster
+        else:
+            print('There aren\'t any clusters formed yet')
+            return largest_cluster
 
     def incremental_dbscan_(self):
         return self.final_dataset
