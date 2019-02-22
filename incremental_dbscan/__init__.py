@@ -11,7 +11,7 @@ def distance(element, mean_core_element):
     Calculates the distance between the element and the mean_core_element using the Euclidean distance
     :param element:  the current element that needs to be checked
     :param mean_core_element:  the average of the elements in a cluster
-    :returns float: the Euclidean distance between the mean_core_element and the element (float)
+    :returns distance: the Euclidean distance between the mean_core_element and the element (float)
     """
     distance = ((element['CPU'] - mean_core_element['CPU'])**2 +
                     (element['Memory'] - mean_core_element['Memory'])**2 +
@@ -86,7 +86,7 @@ class Incremental_DBSCAN:
     def find_mean_core_element(self):
         """
         This function calculates the average core elements of each cluster.
-        Note: It does not calculate an average core element for the outliers!
+        Note: It does not calculate an average core element for the outliers.
         """
         # Exclude rows labeled as outliers
         self.mean_core_elements = self.final_dataset.loc[self.final_dataset['Label'] != -1]
@@ -105,7 +105,7 @@ class Incremental_DBSCAN:
         that has not yet been added to a cluster or considered as outlier.
         The distance is calculated using the distance function as it is described above.
 
-        :returns min_dist_index if there is a cluster that is closest to the new entry element
+        :returns min_dist_index: if there is a cluster that is closest to the new entry element
                         or None if there are no clusters yet.
         """
         min_dist = None
@@ -147,7 +147,7 @@ class Incremental_DBSCAN:
         """
         This function identifies the largest of the clusters with respect to the number of the core elements.
         The largest cluster is the one with the most core elements in it.
-        :returns the number of the largest cluster
+        :returns :the number of the largest cluster
         """
         cluster_number = self.final_dataset.groupby(['Label']).count()
         print(cluster_number)
