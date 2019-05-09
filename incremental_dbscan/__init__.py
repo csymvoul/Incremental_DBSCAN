@@ -1,6 +1,7 @@
 import pandas as pd
 import io
 from sklearn.cluster import DBSCAN
+from incremental_dbscan import cluster
 
 
 def distance(element, mean_core_element):
