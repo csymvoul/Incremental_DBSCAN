@@ -59,7 +59,9 @@ class IncrementalDBSCAN:
         # Cast everything in the final_dataset as integer.
         # If this line is missing, it throws an error
         self.final_dataset = self.final_dataset.astype(int)
-
+        # TODO this needs to be changed! The incremental_dbscan() function needs to be initiated by a third function.
+        #  Once the batch_dbscan() is called and the first clusters are created then the
+        #  incremental_dbscan() has to be called.
         self.incremental_dbscan_()
         # self.sort_dataset_based_on_labels()
         # self.find_mean_core_element()
