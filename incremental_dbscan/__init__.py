@@ -179,7 +179,8 @@ class IncrementalDBSCAN:
             self.check_min_samples_in_eps(min_dist_index=response)
         self.largest_cluster = self.find_largest_cluster()
 
-    # def min_samples_
+    # def min_samples_in_radius(self):
+
 
     # TODO 1:
     #  Find if there are at least min_samples  belonging
@@ -194,4 +195,3 @@ class IncrementalDBSCAN:
 
     #  TODO 3:
     #   Delete old elements - Not sure if it is going to happen
-    
