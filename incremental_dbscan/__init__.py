@@ -194,3 +194,4 @@ class IncrementalDBSCAN:
 
     #  TODO 3:
     #   Delete old elements - Not sure if it is going to happen
+    
