@@ -4,16 +4,16 @@ from sklearn.cluster import DBSCAN
 from incremental_dbscan import cluster
 
 
-def distance(element, mean_core_element):
+def distance(element_1, element_2):
     """
     Calculates the distance between the element and the mean_core_element using the Euclidean distance
-    :param element:  the current element that needs to be checked
-    :param mean_core_element:  the average of the elements in a cluster
-    :returns distance: the Euclidean distance between the mean_core_element and the element (float)
+    :param element_1:  the current element that needs to be checked
+    :param element_2:  the element to check the distance from
+    :returns distance: the Euclidean distance between the element_1 and the element_2(float)
     """
-    euclidean_distance = ((element['CPU'] - mean_core_element['CPU']) ** 2 +
-                    (element['Memory'] - mean_core_element['Memory']) ** 2 +
-                    (element['Disk'] - mean_core_element['Disk']) ** 2) ** (1/2)
+    euclidean_distance = ((element_1['CPU'] - element_2['CPU']) ** 2 +
+                          (element_1['Memory'] - element_2['Memory']) ** 2 +
+                          (element_1['Disk'] - element_2['Disk']) ** 2) ** (1 / 2)
     return euclidean_distance.iloc[0].astype(float)
 
 
@@ -24,6 +24,7 @@ class IncrementalDBSCAN:
         Constructor the Incremental_DBSCAN class.
         :param eps:  the  maximum radius that an element should be in order to formulate a cluster
         :param min_samples:  the minimum samples required in order to formulate a cluster
+        In order to identify the optimum eps and min_samples we need to  make a KNN
         """
         self.dataset = pd.DataFrame(columns=['CPU', 'Memory', 'Disk'])
         self.labels = pd.DataFrame(columns=['Label'])
@@ -123,8 +124,8 @@ class IncrementalDBSCAN:
         if not self.mean_core_elements.empty:
             # Iterate over the mean_core_elements dataframe and find the minimum distance
             for index, current_mean_core_element in self.mean_core_elements.iterrows():
-                tmp_dist = distance(element=self.final_dataset.tail(n=1),
-                                    mean_core_element=current_mean_core_element)
+                tmp_dist = distance(element_1=self.final_dataset.tail(n=1),
+                                    element_2=current_mean_core_element)
                 if min_dist is None:
                     min_dist = tmp_dist
                     min_dist_index = index
@@ -141,10 +142,11 @@ class IncrementalDBSCAN:
         This function checks whether there are at least min_samples in the given radius from the new
         entry element.
         If there are at least min_samples this element will be added to the cluster and the
-        mean_core_element of the current cluster has to be recalculated.  If not, there are two options.
-        1. Check if there are at least min_samples  outliers in the given radius in order to create a new
-            cluster, or
-        2.  Consider it as a new outlier
+        mean_core_element of the current cluster has to be re-calculated.
+        If not, there are two options.
+            1. Check if there are at least min_samples  outliers in the given radius in order to create a new
+                cluster, or
+            2.  Consider it as a new outlier
 
         :param min_dist_index: This is the parameter that contains information related to the closest
         mean_core_element to the current element.
@@ -178,9 +180,6 @@ class IncrementalDBSCAN:
         if response is not None:
             self.check_min_samples_in_eps(min_dist_index=response)
         self.largest_cluster = self.find_largest_cluster()
-
-    # def min_samples_in_radius(self):
-
 
     # TODO 1:
     #  Find if there are at least min_samples  belonging
