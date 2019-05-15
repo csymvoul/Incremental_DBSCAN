@@ -151,7 +151,17 @@ class IncrementalDBSCAN:
         :param min_dist_index: This is the parameter that contains information related to the closest
         mean_core_element to the current element.
         """
+        print("this is the  final element")
+        # print(self.final_dataset[-1])
         print(self.mean_core_elements)
+
+    def incremental_dbscan_(self):
+        self.find_mean_core_element()
+        response = self.calculate_distance()
+        # print(response)
+        if response is not None:
+            self.check_min_samples_in_eps(min_dist_index=response)
+        self.largest_cluster = self.find_largest_cluster()
 
     def find_largest_cluster(self):
         """
@@ -163,7 +173,10 @@ class IncrementalDBSCAN:
         """
         cluster_size = self.final_dataset.groupby('Label')['Label'].count()
         # cluster_size = cluster_size['CPU'].value_counts()
-        cluster_size = cluster_size.drop(labels=[-1])
+        try:
+            cluster_size = cluster_size.drop(labels=[-1])
+        except KeyError:
+            print("the label does not exist")
         largest_cluster = -1
         if not cluster_size.empty:
             largest_cluster = cluster_size.idxmax()
@@ -172,14 +185,6 @@ class IncrementalDBSCAN:
         else:
             print('There aren\'t any clusters formed yet')
             return largest_cluster
-
-    def incremental_dbscan_(self):
-        self.find_mean_core_element()
-        response = self.calculate_distance()
-        # print(response)
-        if response is not None:
-            self.check_min_samples_in_eps(min_dist_index=response)
-        self.largest_cluster = self.find_largest_cluster()
 
     # TODO 1:
     #  Find if there are at least min_samples  belonging
