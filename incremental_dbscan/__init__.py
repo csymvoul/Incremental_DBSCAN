@@ -151,8 +151,8 @@ class IncrementalDBSCAN:
         :param min_dist_index: This is the parameter that contains information related to the closest
         mean_core_element to the current element.
         """
-        print("this is the  final element")
-        # print(self.final_dataset[-1])
+        # print("this is the  final element")
+        # print(self.final_dataset.iloc[-1])
         print(self.mean_core_elements)
 
     def incremental_dbscan_(self):
@@ -175,7 +175,7 @@ class IncrementalDBSCAN:
         # cluster_size = cluster_size['CPU'].value_counts()
         try:
             cluster_size = cluster_size.drop(labels=[-1])
-        except KeyError:
+        except ValueError:
             print("The label -1 does not exist")
         largest_cluster = -1
         if not cluster_size.empty:
