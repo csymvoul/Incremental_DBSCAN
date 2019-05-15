@@ -176,7 +176,7 @@ class IncrementalDBSCAN:
         try:
             cluster_size = cluster_size.drop(labels=[-1])
         except KeyError:
-            print("the label does not exist")
+            print("The label -1 does not exist")
         largest_cluster = -1
         if not cluster_size.empty:
             largest_cluster = cluster_size.idxmax()
