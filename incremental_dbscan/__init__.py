@@ -199,3 +199,6 @@ class IncrementalDBSCAN:
 
     #  TODO 3:
     #   Delete old elements - Not sure if it is going to happen
+
+    #     TODO 4:
+    #      Find the biggest cluster's boundaries and publish them back the RabbitMQ
