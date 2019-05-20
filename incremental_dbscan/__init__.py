@@ -154,7 +154,7 @@ class IncrementalDBSCAN:
         # print("this is the  final element")
         # print(self.final_dataset.iloc[-1])
         print(self.mean_core_elements)
-
+         
     def incremental_dbscan_(self):
         self.find_mean_core_element()
         response = self.calculate_distance()
