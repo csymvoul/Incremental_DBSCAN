@@ -66,7 +66,7 @@ class IncrementalDBSCAN:
         self.incremental_dbscan_()
         # self.sort_dataset_based_on_labels()
         # self.find_mean_core_element()
-        # response = self.calculate_distance()
+        # response = self.calculate_min_distance_centroid()
         # # print(response)
         # if response is not None:
         #     self.check_min_samples_in_eps(min_dist_index=response)
@@ -102,12 +102,12 @@ class IncrementalDBSCAN:
         self.mean_core_elements = self.mean_core_elements \
             .groupby('Label')['CPU', 'Memory', 'Disk'].mean()
         # print(self.mean_core_elements)
-        # response = self.calculate_distance()
+        # response = self.calculate_min_distance_centroid()
         # # print(response)
         # if response is not None:
         #     self.check_min_samples_in_eps(min_dist_index=response)
 
-    def calculate_distance(self):
+    def calculate_min_distance_centroid(self):
         """
         This function identifies the closest mean_core_element to the incoming element
         that has not yet been added to a cluster or considered as outlier.
@@ -157,10 +157,10 @@ class IncrementalDBSCAN:
          
     def incremental_dbscan_(self):
         self.find_mean_core_element()
-        response = self.calculate_distance()
-        # print(response)
-        if response is not None:
-            self.check_min_samples_in_eps(min_dist_index=response)
+        min_distance_mean_core_element = self.calculate_min_distance_centroid()
+        # print(min_distance_mean_core_element)
+        if min_distance_mean_core_element is not None:
+            self.check_min_samples_in_eps(min_dist_index=min_distance_mean_core_element)
         self.largest_cluster = self.find_largest_cluster()
 
     def find_largest_cluster(self):
