@@ -228,16 +228,10 @@ class IncrementalDBSCAN:
             print('There aren\'t any clusters formed yet')
             return largest_cluster
 
-    # TODO 1:
-    #  Find if there are at least min_samples  belonging
-    #  in the cluster with the minimum distance in a radius of eps from the current element .
-    #  If  TRUE, then consider this element as part of the cluster and recompute the mean_core_element.
-
     #  TODO 2:
     #   If FALSE, check whether there are at least min_samples outliers in the eps radius of the element,
     #   in order to create their own cluster.
     #       If TRUE, then create another cluster, change their Label and find their mean_core_element
-    #       If FALSE, consider the element as outlier
 
     #  TODO 3:
     #   Delete old elements - Not sure if it is going to happen
