@@ -69,7 +69,7 @@ class IncrementalDBSCAN:
         # response = self.calculate_min_distance_centroid()
         # # print(response)
         # if response is not None:
-        #     self.check_min_samples_in_eps(min_dist_index=response)
+        #     self.check_min_samples_in_eps_or_outlier(min_dist_index=response)
         # self.largest_cluster = self.find_largest_cluster()
 
     def add_labels_to_dataset(self, labels):
@@ -105,7 +105,7 @@ class IncrementalDBSCAN:
         # response = self.calculate_min_distance_centroid()
         # # print(response)
         # if response is not None:
-        #     self.check_min_samples_in_eps(min_dist_index=response)
+        #     self.check_min_samples_in_eps_or_outlier(min_dist_index=response)
 
     def calculate_min_distance_centroid(self):
         """
@@ -137,7 +137,7 @@ class IncrementalDBSCAN:
         else:
             return None
 
-    def check_min_samples_in_eps(self, min_dist_index):
+    def check_min_samples_in_eps_or_outlier(self, min_dist_index):
         """
         This function checks whether there are at least min_samples in the given radius from the new
         entry element.
@@ -151,16 +151,58 @@ class IncrementalDBSCAN:
         :param min_dist_index: This is the parameter that contains information related to the closest
         mean_core_element to the current element.
         """
-        # print("this is the  final element")
-        # print(self.final_dataset.iloc[-1])
-        print(self.mean_core_elements)
-         
+
+        # Use only the elements of the closest cluster from the new entry element
+        new_element = self.final_dataset.tail(1)
+        nearest_cluster_elements = self.final_dataset[self.final_dataset['Label'] == min_dist_index]
+        min_samples_count = 0
+        for index, cluster_element in nearest_cluster_elements.iterrows():
+            if (cluster_element['CPU'] - self.eps
+                <= float(new_element['CPU']) <= cluster_element['CPU'] + self.eps) \
+                    and (cluster_element['Memory'] - self.eps
+                         <= float(new_element['Memory']) <= cluster_element['Memory'] + self.eps) \
+                    and (cluster_element['Disk'] - self.eps
+                         <= float(new_element['Disk']) <= cluster_element['Disk'] + self.eps):
+                min_samples_count += 1
+
+        if min_samples_count >= self.min_samples:
+            # The new element  has enough cluster labels in the eps range
+            #  and is now considered as a new member of the cluster
+            #  The mean core element of this cluster is re-calculated
+            self.final_dataset.loc[self.final_dataset.index[-1], 'Label'] = min_dist_index
+            self.calculate_min_distance_centroid()
+        else:
+            outliers = self.final_dataset[self.final_dataset['Label'] == -1]
+            outliers_index = self.final_dataset.index
+            min_outliers_count  = 0
+            for index, outlier in outliers.iterrows():
+                if (outlier['CPU'] - self.eps
+                    <= float(new_element['CPU']) <= outlier['CPU'] + self.eps) \
+                        and (outlier['Memory'] - self.eps
+                             <= float(new_element['Memory']) <= outlier['Memory'] + self.eps) \
+                        and (outlier['Disk'] - self.eps
+                             <= float(new_element['Disk']) <= outlier['Disk'] + self.eps):
+                    min_outliers_count += 1
+
+            if min_outliers_count > self.min_samples:
+                # TODO: The only thing missing!
+                # The new element has enough outliers in its eps radius in order to form a new cluster
+                # The new cluster's mean core element is calculated after the cluster's creation
+                print("NOT READY YET")
+            else:
+                # The new element is an outlier.
+                # It is not close enough to its closest in order to be added to it
+                # Neither has enough outliers close by to form a new cluster
+                self.final_dataset.loc[self.final_dataset.index[-1], 'Label'] = -1
+
+        print("THE NEWEST ADDITION: \n", self.final_dataset.tail(1))
+
     def incremental_dbscan_(self):
         self.find_mean_core_element()
-        min_distance_mean_core_element = self.calculate_min_distance_centroid()
+        min_distance_mean_core_element_index = self.calculate_min_distance_centroid()
         # print(min_distance_mean_core_element)
-        if min_distance_mean_core_element is not None:
-            self.check_min_samples_in_eps(min_dist_index=min_distance_mean_core_element)
+        if min_distance_mean_core_element_index is not None:
+            self.check_min_samples_in_eps_or_outlier(min_dist_index=min_distance_mean_core_element_index)
         self.largest_cluster = self.find_largest_cluster()
 
     def find_largest_cluster(self):
