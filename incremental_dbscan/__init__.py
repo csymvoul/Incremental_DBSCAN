@@ -1,7 +1,6 @@
 import pandas as pd
 import io
 from sklearn.cluster import DBSCAN
-from incremental_dbscan import cluster
 
 
 def distance(element_1, element_2):
@@ -235,7 +234,7 @@ class IncrementalDBSCAN:
         largest_cluster = -1
         if not cluster_size.empty:
             largest_cluster = cluster_size.idxmax()
-            print('The cluster with the most elements in it is cluster no: ', cluster_size.idxmax())
+            print('The cluster with the most elements is cluster No: ', cluster_size.idxmax())
             return largest_cluster
         else:
             print('There aren\'t any clusters formed yet')
