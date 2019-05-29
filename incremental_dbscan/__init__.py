@@ -245,3 +245,4 @@ class IncrementalDBSCAN:
             .groupby(self.final_dataset['Label'])\
             .agg(['min', 'max'])
         print(self.cluster_limits)
+        
