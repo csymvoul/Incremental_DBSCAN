@@ -63,7 +63,7 @@ class IncrementalDBSCAN:
         # TODO this needs to be changed! The incremental_dbscan() function needs to be initiated by a third function.
         #  Once the batch_dbscan() is called and the first clusters are created then the
         #  incremental_dbscan() has to be called.
-        self.incremental_dbscan_()
+        # self.incremental_dbscan_()
         # self.sort_dataset_based_on_labels()
         # self.find_mean_core_element()
         # response = self.calculate_min_distance_centroid()
@@ -209,12 +209,17 @@ class IncrementalDBSCAN:
         print("The new element in the dataset: \n", self.final_dataset.tail(1))
 
     def incremental_dbscan_(self):
+        self.final_dataset = self.final_dataset.append({'CPU': self.dataset.iloc[-1]['CPU'],
+                                                        'Memory': self.dataset.iloc[-1]['Memory'],
+                                                        'Disk': self.dataset.iloc[-1]['Disk'],
+                                                        'Label': -1}, ignore_index=True)
         self.find_mean_core_element()
         min_distance_mean_core_element_index = self.calculate_min_distance_centroid()
         # print(min_distance_mean_core_element)
         if min_distance_mean_core_element_index is not None:
             self.check_min_samples_in_eps_or_outlier(min_dist_index=min_distance_mean_core_element_index)
         self.largest_cluster = self.find_largest_cluster()
+        # print(self.final_dataset)
 
     def find_largest_cluster(self):
         """
