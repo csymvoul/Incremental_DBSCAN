@@ -33,6 +33,7 @@ class IncrementalDBSCAN:
         self.eps = eps
         self.min_samples = min_samples
         self.largest_cluster = -1
+        self.cluster_limits = 0
 
     def set_data(self, message):
         """
@@ -219,6 +220,8 @@ class IncrementalDBSCAN:
         if min_distance_mean_core_element_index is not None:
             self.check_min_samples_in_eps_or_outlier(min_dist_index=min_distance_mean_core_element_index)
         self.largest_cluster = self.find_largest_cluster()
+        self.find_cluster_limits()
+
         # print(self.final_dataset)
 
     def find_largest_cluster(self):
@@ -244,6 +247,12 @@ class IncrementalDBSCAN:
             print('There aren\'t any clusters formed yet')
             return largest_cluster
 
+    def find_cluster_limits(self):
+        self.cluster_limits = self.final_dataset\
+            .groupby(self.final_dataset['Label'])\
+            .agg(['min', 'max'])
+        print(self.cluster_limits)
+        # print(cluster_limits.loc[:, cluster_limits.columns != 'Label'])
     #  TODO 3:
     #   Delete old elements - Not sure if it is going to happen
 
