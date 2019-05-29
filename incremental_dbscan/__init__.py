@@ -54,7 +54,7 @@ class IncrementalDBSCAN:
         """
         batch_dbscan = DBSCAN(eps=self.eps, min_samples=self.min_samples).fit(self.dataset)
         # Get the number of the clusters created
-        n_clusters_ = len(set(self.labels)) - (1 if -1 in self.labels else 0)
+        # n_clusters_ = len(set(self.labels)) - (1 if -1 in self.labels else 0)
         self.add_labels_to_dataset(batch_dbscan.labels_)
 
         # Cast everything in the final_dataset as integer.
@@ -245,4 +245,3 @@ class IncrementalDBSCAN:
             .groupby(self.final_dataset['Label'])\
             .agg(['min', 'max'])
         print(self.cluster_limits)
-        
