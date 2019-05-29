@@ -167,14 +167,17 @@ class IncrementalDBSCAN:
 
         if min_samples_count >= self.min_samples:
             # The new element  has enough cluster labels in the eps range
-            #  and is now considered as a new member of the cluster
-            #  The mean core element of this cluster is re-calculated
+            #  and is now considered as a new member of the cluster.
+            #  The mean core element of this cluster is re-calculated.
             self.final_dataset.loc[self.final_dataset.index[-1], 'Label'] = min_dist_index
-            self.calculate_min_distance_centroid()
+            self.find_mean_core_element()
         else:
+            # The new element is not added to its closest cluster. Now we have to check
+            # whether it is going to be considered an outlier or it will form a new cluster
+            # with other outliers.
             outliers = self.final_dataset[self.final_dataset['Label'] == -1]
-            outliers_index = self.final_dataset.index
-            min_outliers_count  = 0
+            min_outliers_count = 0
+            new_cluster_elements = pd.DataFrame(columns=['Index'])
             for index, outlier in outliers.iterrows():
                 if (outlier['CPU'] - self.eps
                     <= float(new_element['CPU']) <= outlier['CPU'] + self.eps) \
@@ -183,19 +186,27 @@ class IncrementalDBSCAN:
                         and (outlier['Disk'] - self.eps
                              <= float(new_element['Disk']) <= outlier['Disk'] + self.eps):
                     min_outliers_count += 1
+                    new_cluster_elements = new_cluster_elements.append({"Index": index}, ignore_index=True)
 
-            if min_outliers_count > self.min_samples:
-                # TODO: The only thing missing!
-                # The new element has enough outliers in its eps radius in order to form a new cluster
-                # The new cluster's mean core element is calculated after the cluster's creation
-                print("NOT READY YET")
+            if min_outliers_count >= self.min_samples:
+                # The new element has enough outliers in its eps radius in order to form a new cluster.
+                new_cluster_number = int(self.final_dataset['Label'].max()) + 1
+                for new_cluster_element in new_cluster_elements.iterrows():
+                    self.final_dataset.loc[
+                        self.final_dataset.index[int(new_cluster_element[1])], 'Label'] = new_cluster_number
+
+                print("A new cluster is now formed out of already existing outliers.")
+
+                # The new cluster's mean core element is calculated after the cluster's creation.
+                self.find_mean_core_element()
+
             else:
                 # The new element is an outlier.
-                # It is not close enough to its closest in order to be added to it
-                # Neither has enough outliers close by to form a new cluster
+                # It is not close enough to its closest in order to be added to it,
+                # neither has enough outliers close by to form a new cluster.
                 self.final_dataset.loc[self.final_dataset.index[-1], 'Label'] = -1
 
-        print("THE NEWEST ADDITION: \n", self.final_dataset.tail(1))
+        print("The new element in the dataset: \n", self.final_dataset.tail(1))
 
     def incremental_dbscan_(self):
         self.find_mean_core_element()
@@ -211,7 +222,7 @@ class IncrementalDBSCAN:
         The largest cluster is the one with the most core elements in it.
 
         :returns: the number of the largest cluster. If -1 is returned, then there are no clusters created
-        in the first place
+        in the first place.
         """
         cluster_size = self.final_dataset.groupby('Label')['Label'].count()
         # cluster_size = cluster_size['CPU'].value_counts()
@@ -227,11 +238,6 @@ class IncrementalDBSCAN:
         else:
             print('There aren\'t any clusters formed yet')
             return largest_cluster
-
-    #  TODO 2:
-    #   If FALSE, check whether there are at least min_samples outliers in the eps radius of the element,
-    #   in order to create their own cluster.
-    #       If TRUE, then create another cluster, change their Label and find their mean_core_element
 
     #  TODO 3:
     #   Delete old elements - Not sure if it is going to happen
