@@ -1,7 +1,6 @@
 import pandas as pd
 import io
 from sklearn.cluster import DBSCAN
-from flask import Flask
 
 
 def distance(element_1, element_2):
@@ -34,6 +33,7 @@ class IncrementalDBSCAN:
         self.min_samples = min_samples
         self.largest_cluster = -1
         self.cluster_limits = 0
+        self.largest_cluster_limits = 0
 
     def set_data(self, message):
         """
@@ -217,6 +217,7 @@ class IncrementalDBSCAN:
             self.check_min_samples_in_eps_or_outlier(min_dist_index=min_distance_mean_core_element_index)
         self.largest_cluster = self.find_largest_cluster()
         self.find_cluster_limits()
+        self.get_largest_cluster_limits()
 
     def find_largest_cluster(self):
         """
@@ -245,4 +246,8 @@ class IncrementalDBSCAN:
         self.cluster_limits = self.final_dataset\
             .groupby(self.final_dataset['Label'])\
             .agg(['min', 'max'])
-        print(self.cluster_limits)
+        self.cluster_limits.to_json(r'../json_exports/all_cluster_limits.json')
+
+    def get_largest_cluster_limits(self):
+        self.largest_cluster_limits = self.cluster_limits.iloc[self.largest_cluster]
+        print(self.largest_cluster_limits)

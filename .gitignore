@@ -6,3 +6,6 @@ venv/
 
 # Ignore the .idea folder
 .idea/
+
+#Ignore json_exports
+json_exports/
