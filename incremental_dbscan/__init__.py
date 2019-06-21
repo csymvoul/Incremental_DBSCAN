@@ -246,8 +246,10 @@ class IncrementalDBSCAN:
         self.cluster_limits = self.final_dataset\
             .groupby(self.final_dataset['Label'])\
             .agg(['min', 'max'])
+        print(self.cluster_limits)
         self.cluster_limits.to_json(r'../json_exports/all_cluster_limits.json')
 
     def get_largest_cluster_limits(self):
-        self.largest_cluster_limits = self.cluster_limits.iloc[self.largest_cluster]
+        self.largest_cluster_limits = self.cluster_limits.iloc[self.largest_cluster+1]
+        self.largest_cluster_limits.to_json(r'../json_exports/largest_cluster_limits.json')
         print(self.largest_cluster_limits)
