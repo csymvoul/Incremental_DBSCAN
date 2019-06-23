@@ -251,5 +251,6 @@ class IncrementalDBSCAN:
 
     def get_largest_cluster_limits(self):
         self.largest_cluster_limits = self.cluster_limits.iloc[self.largest_cluster+1]
+        print(list(self.largest_cluster_limits))
         self.largest_cluster_limits.to_json(r'../json_exports/largest_cluster_limits.json')
         print(self.largest_cluster_limits)
